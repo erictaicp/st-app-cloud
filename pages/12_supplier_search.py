@@ -20,9 +20,9 @@ with open(config_path, 'r') as file:
 configInputDict = config['inputs'] 
 
 # MongoDB connection setup  
-client = MongoClient(os.getenv("SUPPLIER_MONGOCONN"))
-supplier_db = client['uat-suppliers']
-supplier_collection = supplier_db['gold']
+client = MongoClient(os.getenv("POC_MONGOCONN"))
+supplier_db = client['search-agent']
+supplier_collection = supplier_db['sub_gold']
 
 client = MongoClient(os.getenv("POC_MONGOCONN"))
 search_db = client['search-agent']
