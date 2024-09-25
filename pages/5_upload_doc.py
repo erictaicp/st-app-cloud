@@ -17,8 +17,8 @@ from utils import add_logo
 
 # Load environment variables
 load_dotenv()
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'app')))
-
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..','app')))
+print(os.path.abspath(os.path.join(os.path.dirname(__file__), '..','app')))
 from src.utils import up_file, dl_file
 
 # Get the absolute path of the directory of the current script
