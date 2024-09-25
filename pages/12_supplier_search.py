@@ -13,20 +13,25 @@ load_dotenv()
 dir_path = os.path.dirname(os.path.realpath(__file__))    
   
 # Use os.path.join to navigate to the config.yaml file    
-config_path = os.path.join(dir_path, 'app', 'config.yaml')    
+config_path = os.path.join(dir_path, '..', '..', 'app', 'config.yaml')    
 with open(config_path, 'r') as file:    
     config = yaml.safe_load(file)     
 
 configInputDict = config['inputs'] 
 
 # MongoDB connection setup  
-client = MongoClient(os.getenv("POC_MONGOCONN"))
-supplier_db = client['search-agent']
-supplier_collection = supplier_db['sub_gold']
+client = MongoClient(os.getenv("SUPPLIER_MONGOCONN"))
+supplier_db = client['uat-suppliers']
+supplier_collection = supplier_db['gold']
+
+# client = MongoClient(os.getenv("POC_MONGOCONN"))
+# supplier_db = client['search-agent']
+# supplier_collection = supplier_db['sub_gold']
 
 client = MongoClient(os.getenv("POC_MONGOCONN"))
 search_db = client['search-agent']
 search_collection = search_db['search_history']
+# supplier_collection = search_db['sub_gold']
 
 # Add this at the beginning of the file, after the imports
 def check_password():
@@ -68,8 +73,8 @@ I would like to perform a supplier search with the following details:
 
 Please execute the supplier_search function using these parameters.
 """
-    url = "https://api.uat.t4s.lfxdigital.app/agents/v1/agent/agent-call"
-    #url = "http://localhost:8080/agent/agent-call"
+
+    url = "http://localhost:8080/agent/agent-call"
     payload = {'message': prompt, 
                'user_id': configInputDict['admin_id'][0], 
                'thread_id': thread_id}
@@ -190,34 +195,32 @@ Ready to get started? Simply enter your search criteria below!
         num_suppliers = len(supplier_ids)
         num_rows = math.ceil(num_suppliers / num_to_display)
         
-        try:
-            for row in range(num_rows):
-                cols = st.columns(num_to_display)
-                for col in range(num_to_display):
-                    index = row * num_to_display + col
-                    if index < num_suppliers:
-                        supplier_id = supplier_ids[index]
-                        id_criteria = {"System.ID": supplier_id}
-                        supplier_record = supplier_collection.find_one(id_criteria)
+        for row in range(num_rows):
+            cols = st.columns(num_to_display)
+            for col in range(num_to_display):
+                index = row * num_to_display + col
+                if index < num_suppliers:
+                    supplier_id = supplier_ids[index]
+                    id_criteria = {"System.ID": supplier_id}
+                    supplier_record = supplier_collection.find_one(id_criteria)
 
-                        cols[col].markdown(display_record(supplier_record), unsafe_allow_html=True)
-                        
-                        reason = reasons[index]
-                        reason_html = f"""
-                        <div style="border: 1px solid #d1d1d1; border-radius: 5px; padding: 10px; background-color: #d4f5d4; color: #2c3e50; font-size: 14px; margin-top: 10px; min-height: 70px;">
-                            <strong>Reason:</strong> {reason}
-                        </div>
-                        """
-                        cols[col].markdown(reason_html, unsafe_allow_html=True)
-                        
-                        # Add expander for more details
-                        with cols[col].expander("RAW OUTPUT", expanded=False):
-                            filtered_record = remove_none_and_specific_keys(supplier_record, keys_to_remove)
-                            st.json(filtered_record)
-                    else:
-                        cols[col].markdown("")
-        except:
-            pass
+                    cols[col].markdown(display_record(supplier_record), unsafe_allow_html=True)
+                    
+                    reason = reasons[index]
+                    reason_html = f"""
+                    <div style="border: 1px solid #d1d1d1; border-radius: 5px; padding: 10px; background-color: #d4f5d4; color: #2c3e50; font-size: 14px; margin-top: 10px; min-height: 70px;">
+                        <strong>Reason:</strong> {reason}
+                    </div>
+                    """
+                    cols[col].markdown(reason_html, unsafe_allow_html=True)
+                    
+                    # Add expander for more details
+                    with cols[col].expander("RAW OUTPUT", expanded=False):
+                        filtered_record = remove_none_and_specific_keys(supplier_record, keys_to_remove)
+                        st.json(filtered_record)
+                else:
+                    cols[col].markdown("")
+
     if search_button:
         if query:
             with st.spinner("Searching..."):
