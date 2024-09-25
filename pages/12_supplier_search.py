@@ -187,72 +187,75 @@ Ready to get started? Simply enter your search criteria below!
         """
 
 
-    def display_supplier_grid(supplier_ids, reasons):
-        st.markdown(f"### 🏬 Suppliers Search Results")
-        
+    def display_supplier_grid(supplier_ids, reasons, contents):
+        st.markdown(f"### :department_store: Suppliers Search Results")
         num_to_display = 2
         # Calculate the number of rows needed
         num_suppliers = len(supplier_ids)
         num_rows = math.ceil(num_suppliers / num_to_display)
+        try:
+            for row in range(num_rows):
+                cols = st.columns(num_to_display)
+                for col in range(num_to_display):
+                    index = row * num_to_display + col
+                    if index < num_suppliers:
+                        supplier_id = supplier_ids[index]
+                        id_criteria = {"System.ID": supplier_id}
+                        supplier_record = supplier_collection.find_one(id_criteria)
+                        cols[col].markdown(display_record(supplier_record), unsafe_allow_html=True)
+                        content = contents[index]
+                        reason = reasons[index]
+                        reason_html = f"""
+                        <div style="border: 1px solid #D1D1D1; border-radius: 5px; padding: 10px; background-color: #D4F5D4; color: #2C3E50; font-size: 14px; margin-top: 10px; min-height: 70px;">
+                            <strong>Reason:</strong> {reason}
+                        </div>
+                        """
+                        cols[col].markdown(reason_html, unsafe_allow_html=True)
+                        # Add expander for more details
+                        with cols[col].expander("RAW OUTPUT", expanded=False):
+                            # filtered_record = remove_none_and_specific_keys(supplier_record, keys_to_remove)
+                            # st.json(filtered_record)
+                            st.markdown(content)
+                    else:
+                        cols[col].markdown("")
+        except:
+            pass
         
-        for row in range(num_rows):
-            cols = st.columns(num_to_display)
-            for col in range(num_to_display):
-                index = row * num_to_display + col
-                if index < num_suppliers:
-                    supplier_id = supplier_ids[index]
-                    id_criteria = {"System.ID": supplier_id}
-                    supplier_record = supplier_collection.find_one(id_criteria)
-
-                    cols[col].markdown(display_record(supplier_record), unsafe_allow_html=True)
-                    
-                    reason = reasons[index]
-                    reason_html = f"""
-                    <div style="border: 1px solid #d1d1d1; border-radius: 5px; padding: 10px; background-color: #d4f5d4; color: #2c3e50; font-size: 14px; margin-top: 10px; min-height: 70px;">
-                        <strong>Reason:</strong> {reason}
-                    </div>
-                    """
-                    cols[col].markdown(reason_html, unsafe_allow_html=True)
-                    
-                    # Add expander for more details
-                    with cols[col].expander("RAW OUTPUT", expanded=False):
-                        filtered_record = remove_none_and_specific_keys(supplier_record, keys_to_remove)
-                        st.json(filtered_record)
-                else:
-                    cols[col].markdown("")
-
     if search_button:
         if query:
             with st.spinner("Searching..."):
                 search_id = str(uuid.uuid4())
                 thread_id = str(uuid.uuid4())
-
                 get_supplier_ids(search_id, query, thread_id)
-
                 log = wait_for_log(thread_id, timeout=30)
-
                 if log is None:
                     st.error("Failed to retrieve the log entry within the timeout period.")
                 else:
                     token_usage = log['token_usage']
                     ai_answer = log['ai_response']
-                    st.success(f"🤖: {ai_answer}")
-
+                    st.success(f":robot_face:: {ai_answer}")
                     # col1, col2, col3 = st.columns(3)
                     # col1.metric(label="Total Tokens", value=f"{token_usage['total_tokens']:,}")
                     # col2.metric(label="Prompt Tokens", value=f"{token_usage['prompt_tokens']:,}")
                     # col3.metric(label="Completion Tokens", value=f"{token_usage['completion_tokens']:,}")
-
                     critiria = {"search_id": search_id}
                     search_record = search_collection.find_one(critiria)
-
                     supplier_ids = search_record.get('supplier_ids')
                     reasons = search_record.get('reasons')
-
+                    contents = search_record.get('retrieved_data')
                     st.divider()
-
                     display_limit = 30
-                    display_supplier_grid(supplier_ids[:display_limit], reasons[:display_limit])  # Display up to 30 suppliers
+                    display_supplier_grid(supplier_ids[:display_limit],
+                                        reasons[:display_limit],
+                                        contents[:display_limit])
+
+
+
+
+
+
+
+
 
 else:
     st.stop()  # Don't run the rest of the app.
