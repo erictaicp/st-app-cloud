@@ -68,8 +68,8 @@ I would like to perform a supplier search with the following details:
 
 Please execute the supplier_search function using these parameters.
 """
-
-    url = "http://localhost:8080/agent/agent-call"
+    url = "https://api.uat.t4s.lfxdigital.app/agents/v1/agent/agent-call"
+    #url = "http://localhost:8080/agent/agent-call"
     payload = {'message': prompt, 
                'user_id': configInputDict['admin_id'][0], 
                'thread_id': thread_id}
