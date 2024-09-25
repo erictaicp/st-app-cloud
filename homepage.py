@@ -118,9 +118,9 @@ testimonials = [
 for idx, (quote, author) in enumerate(testimonials):
     with cols[idx]:
         st.markdown(f"""
-        <div style='background-color: white; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);'>
-            <p style='font-style: italic;'>{quote}</p>
-            <p style='text-align: right;'><strong>- {author}</strong></p>
+        <div style='background-color: white; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); height: 200px; display: flex; flex-direction: column; justify-content: space-between;'>
+            <p style='font-style: italic; flex-grow: 1;'>{quote}</p>
+            <p style='text-align: right; margin-bottom: 0;'><strong>- {author}</strong></p>
         </div>
         """, unsafe_allow_html=True)
 
