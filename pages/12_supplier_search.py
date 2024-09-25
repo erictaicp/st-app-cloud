@@ -20,9 +20,9 @@ with open(config_path, 'r') as file:
 configInputDict = config['inputs'] 
 
 # MongoDB connection setup  
-client = MongoClient(os.getenv("SUPPLIER_MONGOCONN"))
-supplier_db = client['uat-suppliers']
-supplier_collection = supplier_db['gold']
+# client = MongoClient(os.getenv("SUPPLIER_MONGOCONN"))
+# supplier_db = client['uat-suppliers']
+# supplier_collection = supplier_db['gold']
 
 # client = MongoClient(os.getenv("POC_MONGOCONN"))
 # supplier_db = client['search-agent']
@@ -31,7 +31,7 @@ supplier_collection = supplier_db['gold']
 client = MongoClient(os.getenv("POC_MONGOCONN"))
 search_db = client['search-agent']
 search_collection = search_db['search_history']
-# supplier_collection = search_db['sub_gold']
+supplier_collection = search_db['sub_gold']
 
 # Add this at the beginning of the file, after the imports
 def check_password():
