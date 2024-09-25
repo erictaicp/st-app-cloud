@@ -9,7 +9,7 @@ def read_markdown_file(markdown_file):
 # Get the absolute path of the directory of the current script
 dir_path = os.path.dirname(os.path.realpath(__file__))
 # Use os.path.join to navigate to the config.yaml file
-readme_file = os.path.join('/'.join(dir_path.split('/')[:-2]),'readme.md')
+readme_file = 'readme.md'
 
 # Set page configuration and theme
 st.set_page_config(
