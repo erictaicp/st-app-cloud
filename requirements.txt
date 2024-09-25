@@ -1,1 +1,35 @@
+# FastAPI and related packages
+fastapi
+uvicorn
+
+# Asynchronous HTTP client
+aiohttp
+
+# Environment variables management
+python-dotenv
+
+# Asyncio utilities
+nest_asyncio
+
+
+# PDF and image processing
+pdf2image
+pillow
+pillow-heif
+
+# Web scraping and HTML processing
+requests
+
+# Streamlit for web apps
 streamlit
+
+# MongoDB client
+pymongo
+
+# File upload handling
+python-multipart
+
+# Azure services
+azure-storage-blob==12.19.0
+azure-identity==1.15.0
+azure-servicebus==7.12.2

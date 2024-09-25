@@ -1,0 +1,53 @@
+document_type:
+  - Certificate of Origin
+  - Commercial Invoice
+  - Proof of Payment
+  - Contract
+  - Bill of Lading
+  - Delivery Note
+  - Packing List
+  - Customs Clearance
+  - Business License
+  - Production Record
+  - Warehouse Record
+  - Certification Record
+doc_type_family:
+  {"Certificate of Origin": ["Certificate of Origin"],
+  "Commercial Invoice": ["Commercial Invoice", "VAT Invoice", "Invoice"],
+  "Proof of Payment": ["Proof of Payment", "Payment Voucher", "Customer Advice", "Bank Transaction Detail", "Detail of Payment"],
+  "Contract": ["Contract", "Sales Contract", "Labor Cost Contract", "Purchase Contract"],
+  "Bill of Lading": ["Bill of Lading", "Cargo Receipt", "Forwarder Certificate of Receipt"],
+  "Delivery Note": ["Delivery Note", "Delivery Challan"],
+  "Packing List": ["Packing List"],
+  "Customs Clearance": ["Custom Clearance", "Bill of Entry"],
+  "Business License": ["Business License", "Trade License", "Business Registration", "Certificate of Registration", "Certificate of Business Registration", "Trademark Registration Certificate"],
+  "Production Record": ["Production Record"],
+  "Warehouse Record": ["Warehouse Record"],
+  "Certification Record": ["Certification Record"]}
+selected_fields:
+  {"Certificate of Origin": ["Document Number", "Shipper Name", "Shipper Address", "Consignee Name", "Consignee Address", "Notify Party", "Port of Loading", "Port of Discharge", "'Details': as dictionaries with (Description of Goods, UOM, Quantity)"],
+  "Commercial Invoice": ["Invoice number", "Seller Name", "Seller Address", "Buyer Name", "Buyer Address", "'Details': as dictionaries with (Description of Goods, UOM, Quantity)"],
+  "Proof of Payment": ["Payment Reference Number", "Date of Payment", "Payer Name", "Payer Address", "Payee Name", "Payee Address", "Transaction ID"],
+  "Contract": ["Contract Number", "Seller Name", "Seller Address", "Buyer Name", "Buyer Address", "Contract Date", "'Details': as dictionaries with (Description of Goods, UOM, Quantity)"],
+  "Bill of Lading": ["Document Number", "Shipper Name", "Shipper Address", "Consignee Name", "Consignee Address", "Notify Party", "Port of Loading", "Port of Discharge", "On Board Date", "Cargo Receipt Date", "'Details': as dictionaries with (Description of Goods, UOM, Quantity) refer to attach list for details if necessary"],
+  "Delivery Note": ["Delivery Note Number", "Date", "Buyer Name", "Buyer Address", "Supplier Name", "Supplier Address", "Recipient Information", "'Details': as dictionaries with (Description of Goods, UOM, Quantity)", "Quantity Delivered", "'Receipt Confirmation': return (Yes) if signature or stamp spotted else (No)"],
+  "Packing List": ["Consignee Name", "Consignee Address", "Consignor Name", "Consignor Address", "Total Number of Carton", "Total Quantity", "Total Gross Weight", "Total Net Weight", "'Details': as dictionaries with (Item Number, Item Description, Item Quantity, Item Carton, Item Gross Weight, Item Net Weight, Item UOM)"],
+  "Customs Clearance": ["Customs Number", "Contract Number", "Consignee Name", "Consignee Address", "Consignor Name", "Consignor Address", "User Name", "User Address", "Date", "Gross Weight", "Net Weight", "Origin", "'Details': as dictionaries with (Description of Goods, UOM, Quantity)"],
+  "Business License": ["License Number", "Business Name", "Nature of Business", "Business Address", "Commencement Date"],
+  "Production Record": ["Manufacturer name", "Manufacturer address", "Production Date", "Production Line", "'Details': as dictionaries with (PO Number, Item Number, Goods Description, Qty of Produced, Qty of Raw Material Used)"],
+  "Warehouse Record": ["Receiver name", "Receiver address", "'Details': as dictionaries with (Stock-In Date, Stock-in Qty, Goods Description, PO Number)", "Receipt Date", "Receipt Confirmation"],
+  "Certification Record": ["Name of Issuing Organization", "Reference number of Certification", "License Code of the certification", "Issue Date", "Expiration Date", "Stamp of issue body", "Standard Logo", "Seller name", "Seller address", "Buyer name", "Buyer address", "Last Processor of the product name", "Last Processor of the product address", "'Details': as dictionaries with (Goods Description, Goods Grade, Product Qty, Correlated Number of Contract/Invoice)"]}
+database:
+  type: mongodb
+  db_name: t4s-v2-agent-dev
+admin_id:
+  - iamadmin
+base_url:
+  https://api.uat.t4s.lfxdigital.app/v2
+tools:
+  admin_tools:
+  - send_reminder_to_all_T4S
+  - run_doc_validation_T4S
+  - send_reminder_to_single_T4S
+  client_tools:
+  - send_reminder_to_single_T4S
