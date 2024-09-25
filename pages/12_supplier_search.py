@@ -190,10 +190,10 @@ Ready to get started? Simply enter your search criteria below!
         num_suppliers = len(supplier_ids)
         num_rows = math.ceil(num_suppliers / num_to_display)
         
-        for row in range(num_rows):
-            cols = st.columns(num_to_display)
-            for col in range(num_to_display):
-                try:
+        try:
+            for row in range(num_rows):
+                cols = st.columns(num_to_display)
+                for col in range(num_to_display):
                     index = row * num_to_display + col
                     if index < num_suppliers:
                         supplier_id = supplier_ids[index]
@@ -216,8 +216,8 @@ Ready to get started? Simply enter your search criteria below!
                             st.json(filtered_record)
                     else:
                         cols[col].markdown("")
-                except:
-                    pass
+        except:
+            pass
     if search_button:
         if query:
             with st.spinner("Searching..."):
