@@ -12,11 +12,11 @@ load_dotenv()
 dir_path = os.path.dirname(os.path.realpath(__file__))    
   
 # Use os.path.join to navigate to the config.yaml file    
-config_path = os.path.join(dir_path, '..', '..', 'app', 'config.yaml')    
+config_path = os.path.join(dir_path, 'app', 'config.yaml')    
 with open(config_path, 'r') as file:    
     config = yaml.safe_load(file)    
   
-config_path = os.path.join(dir_path, '..', '..', 'app', 'config_Air8.yaml')  
+config_path = os.path.join(dir_path, 'app', 'config_Air8.yaml')  
 with open(config_path, 'r') as file:  
     config_Air8 = yaml.safe_load(file)  
   

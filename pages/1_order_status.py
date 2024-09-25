@@ -12,7 +12,7 @@ from utils import add_logo
 # Load environment variables and configurations
 load_dotenv()
 dir_path = os.path.dirname(os.path.realpath(__file__))
-config_path = os.path.join(dir_path, '../..', 'app', 'config.yaml')
+config_path = os.path.join(dir_path, 'app', 'config.yaml')
 
 with open(config_path, 'r') as file:
     config = yaml.safe_load(file)

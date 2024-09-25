@@ -11,13 +11,13 @@ from utils import add_logo
 
 # Load environment variables
 load_dotenv()
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..', 'app')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__),  'app')))
 
 # Get the absolute path of the directory of the current script
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 # Use os.path.join to navigate to the config.yaml file
-config_path = os.path.join(dir_path, '..', '..', 'app', 'config.yaml')
+config_path = os.path.join(dir_path, 'app', 'config.yaml')
 with open(config_path, 'r') as file:
     config = yaml.safe_load(file)
 
