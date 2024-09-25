@@ -77,8 +77,8 @@ Could you search for information and news about a company? Here are the details:
 - Search adverse news: {search_adverse_news}
 """
     
-    url = "http://localhost:8080/agent/agent-call"
-    # url = "https://api.uat.t4s.lfxdigital.app/agents/v1/agent/agent-call"
+    #url = "http://localhost:8080/agent/agent-call"
+    url = "https://api.uat.t4s.lfxdigital.app/agents/v1/agent/agent-call"
 
     payload = {'message': prompt, 
             'user_id': configInputDict['admin_id'][0], 

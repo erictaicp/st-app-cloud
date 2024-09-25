@@ -42,8 +42,8 @@ The order ID is {order_id}
 The rule set is {rules}
 The document types that need to be checked are {doc_types_to_check}
 """
-    url = "http://localhost:8080/agent/agent-call"
-    # url = "https://api.uat.t4s.lfxdigital.app/agents/v1/agent/agent-call"
+    #url = "http://localhost:8080/agent/agent-call"
+    url = "https://api.uat.t4s.lfxdigital.app/agents/v1/agent/agent-call"
 
     payload = {'message': prompt, 
                'user_id': configInputDict['admin_id'][0], 

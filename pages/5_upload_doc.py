@@ -90,8 +90,8 @@ def handle_file_upload(order, doc_name, uploaded_file):
                         image_path is {file_path}.
                         """).strip()
         
-        url = "http://localhost:8080/agent/agent-call"
-        # url = "https://api.uat.t4s.lfxdigital.app/agents/v1/agent/agent-call"
+        #url = "http://localhost:8080/agent/agent-call"
+        url = "https://api.uat.t4s.lfxdigital.app/agents/v1/agent/agent-call"
 
         payload = {'message': prompt, 
                    'user_id': configInputDict['admin_id'][0], 

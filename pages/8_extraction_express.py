@@ -197,8 +197,8 @@ The target document type is {doc_type}
 {statement}
 """
         
-    url = "http://localhost:8080/agent/agent-call"
-    # url = "https://api.uat.t4s.lfxdigital.app/agents/v1/agent/agent-call"
+    #url = "http://localhost:8080/agent/agent-call"
+    url = "https://api.uat.t4s.lfxdigital.app/agents/v1/agent/agent-call"
 
     thread_id = str(uuid.uuid4())
     payload = {'message': prompt, 

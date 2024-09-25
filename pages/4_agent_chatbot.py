@@ -35,8 +35,8 @@ if "user_messages" not in st.session_state:
 # Function to get a response from the FastAPI endpoint
 def get_chatbot_response(user_input, thread_id, user_id):
     
-    url = "http://localhost:8080/agent/agent-call"
-    # url = "https://api.uat.t4s.lfxdigital.app/agents/v1/agent/agent-call"
+    #url = "http://localhost:8080/agent/agent-call"
+    url = "https://api.uat.t4s.lfxdigital.app/agents/v1/agent/agent-call"
 
     payload = {
         'message': user_input,
