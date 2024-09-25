@@ -193,29 +193,31 @@ Ready to get started? Simply enter your search criteria below!
         for row in range(num_rows):
             cols = st.columns(num_to_display)
             for col in range(num_to_display):
-                index = row * num_to_display + col
-                if index < num_suppliers:
-                    supplier_id = supplier_ids[index]
-                    id_criteria = {"System.ID": supplier_id}
-                    supplier_record = supplier_collection.find_one(id_criteria)
+                try:
+                    index = row * num_to_display + col
+                    if index < num_suppliers:
+                        supplier_id = supplier_ids[index]
+                        id_criteria = {"System.ID": supplier_id}
+                        supplier_record = supplier_collection.find_one(id_criteria)
 
-                    cols[col].markdown(display_record(supplier_record), unsafe_allow_html=True)
-                    
-                    reason = reasons[index]
-                    reason_html = f"""
-                    <div style="border: 1px solid #d1d1d1; border-radius: 5px; padding: 10px; background-color: #d4f5d4; color: #2c3e50; font-size: 14px; margin-top: 10px; min-height: 70px;">
-                        <strong>Reason:</strong> {reason}
-                    </div>
-                    """
-                    cols[col].markdown(reason_html, unsafe_allow_html=True)
-                    
-                    # Add expander for more details
-                    with cols[col].expander("RAW OUTPUT", expanded=False):
-                        filtered_record = remove_none_and_specific_keys(supplier_record, keys_to_remove)
-                        st.json(filtered_record)
-                else:
-                    cols[col].markdown("")
-
+                        cols[col].markdown(display_record(supplier_record), unsafe_allow_html=True)
+                        
+                        reason = reasons[index]
+                        reason_html = f"""
+                        <div style="border: 1px solid #d1d1d1; border-radius: 5px; padding: 10px; background-color: #d4f5d4; color: #2c3e50; font-size: 14px; margin-top: 10px; min-height: 70px;">
+                            <strong>Reason:</strong> {reason}
+                        </div>
+                        """
+                        cols[col].markdown(reason_html, unsafe_allow_html=True)
+                        
+                        # Add expander for more details
+                        with cols[col].expander("RAW OUTPUT", expanded=False):
+                            filtered_record = remove_none_and_specific_keys(supplier_record, keys_to_remove)
+                            st.json(filtered_record)
+                    else:
+                        cols[col].markdown("")
+                except:
+                    pass
     if search_button:
         if query:
             with st.spinner("Searching..."):
