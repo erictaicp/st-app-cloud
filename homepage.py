@@ -27,7 +27,7 @@ st.markdown("""
         font-size: 1rem;
     }
     .feature-card {
-        background-color: white;
+        background-color: white !important;
         border-radius: 0.5rem;
         padding: 1rem;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -43,11 +43,19 @@ st.markdown("""
         font-size: 1.2rem;
         font-weight: bold;
         margin-bottom: 0.5rem;
+        color: #1F2937 !important;
     }
     .feature-description {
         font-size: 0.9rem;
-        color: #4B5563;
+        color: #4B5563 !important;
         flex-grow: 1;
+    }
+    [data-testid="stMarkdownContainer"] > .feature-card {
+        background-color: white !important;
+        color: #1F2937 !important;
+    }
+    [data-testid="stMarkdownContainer"] > div > p {
+        color: #4B5563 !important;
     }
     </style>
     """, unsafe_allow_html=True)

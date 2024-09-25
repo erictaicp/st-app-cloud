@@ -1,0 +1,52 @@
+import os
+from io import BytesIO
+from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient, generate_blob_sas, BlobSasPermissions
+from datetime import datetime, timedelta
+
+def dl_file(_container, _blob, _filename = None, _folder = None, blob_service_client=blob_service_client):
+    """
+    _container = os.getenv('BLOB_CONTAINER')
+    _blob = 'NetAPorter/image/event/vacation/pri/1647597326624016.jpg'
+    _blobImageHash = dl_file( _container= _container ,_blob = _blob)
+    """
+    blob_client = blob_service_client.get_blob_client(container=_container, blob=_blob)
+    
+    # Check if the blob exists and is not empty
+    try:
+        blob_properties = blob_client.get_blob_properties()
+        if blob_properties.size == 0:
+            print(f"Blob {_blob} is empty. Skipping download.")
+            return None
+    except Exception as e:
+        print(f"Failed to get properties for blob {_blob}. Error: {str(e)}")
+        return None
+
+    if _filename:
+        file_hash = _filename
+    else:
+        filentype = _blob.split('.')[-1]
+        file_hash = hashlib.sha256(_blob.encode('utf-8')).hexdigest() + '.' + filentype
+    
+    if _folder:
+        os.makedirs(_folder, exist_ok=True)  # Create the directory if it doesn't exist
+        file_hash = os.path.join(_folder, file_hash)
+        
+    with open(file_hash, "wb") as my_blob:
+        download_stream = blob_client.download_blob()
+        my_blob.write(download_stream.readall())
+        
+    return file_hash
+
+
+def up_file(_container, _blob, _up_name=None, data=None, blob_service_client=blob_service_client):
+    # Create a BlobClient object for the container and blob
+    blob_client = blob_service_client.get_blob_client(container=_container, blob=_blob)
+    if data:
+        blob_client.upload_blob(data, overwrite=True)
+    elif _up_name:
+        # Upload the file to the blob
+        with open(_up_name, 'rb') as data:
+            blob_client.upload_blob(data, overwrite=True)
+    else:
+        raise ValueError("Either 'data' or '_up_name' must be provided.")
+    
