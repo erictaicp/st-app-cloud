@@ -12,12 +12,17 @@ load_dotenv()
 # Get the absolute path of the directory of the current script    
 dir_path = os.path.dirname(os.path.realpath(__file__))    
   
-# Use os.path.join to navigate to the config.yaml file    
-config_path = os.path.join(dir_path, 'app', 'config.yaml')
-with open(config_path, 'r') as file:    
-    config = yaml.safe_load(file)     
+# Use os.path.join to navigate to the config.yaml file in the root directory
+config_path = os.path.join(dir_path, '..', 'config.yaml')
 
-configInputDict = config['inputs'] 
+try:
+    with open(config_path, 'r') as file:
+        config = yaml.safe_load(file)
+    configInputDict = config['inputs']
+except FileNotFoundError:
+    st.error(f"Configuration file not found at {config_path}. Please ensure it exists and contains the necessary settings.")
+    config = {}
+    configInputDict = {}
 
 # MongoDB connection setup  
 # client = MongoClient(os.getenv("SUPPLIER_MONGOCONN"))
@@ -73,8 +78,9 @@ I would like to perform a supplier search with the following details:
 
 Please execute the supplier_search function using these parameters.
 """
-
     url = "https://api.uat.t4s.lfxdigital.app/agents/v1/agent/agent-call"
+
+    # url = "http://localhost:8080/agent/agent-call"
     payload = {'message': prompt, 
                'user_id': configInputDict['admin_id'][0], 
                'thread_id': thread_id}
@@ -144,6 +150,7 @@ Ready to get started? Simply enter your search criteria below!
                                   help="Click to search", 
                                   use_container_width=True)
 
+
     def remove_none_and_specific_keys(d, keys_to_remove):
         if isinstance(d, dict):
             return {k: remove_none_and_specific_keys(v, keys_to_remove) 
@@ -188,7 +195,8 @@ Ready to get started? Simply enter your search criteria below!
 
 
     def display_supplier_grid(supplier_ids, reasons, contents):
-        st.markdown(f"### :department_store: Suppliers Search Results")
+        st.markdown(f"### 🏬 Suppliers Search Results")
+        
         num_to_display = 2
         # Calculate the number of rows needed
         num_suppliers = len(supplier_ids)
@@ -202,15 +210,18 @@ Ready to get started? Simply enter your search criteria below!
                         supplier_id = supplier_ids[index]
                         id_criteria = {"System.ID": supplier_id}
                         supplier_record = supplier_collection.find_one(id_criteria)
+
                         cols[col].markdown(display_record(supplier_record), unsafe_allow_html=True)
+                        
                         content = contents[index]
                         reason = reasons[index]
                         reason_html = f"""
-                        <div style="border: 1px solid #D1D1D1; border-radius: 5px; padding: 10px; background-color: #D4F5D4; color: #2C3E50; font-size: 14px; margin-top: 10px; min-height: 70px;">
+                        <div style="border: 1px solid #d1d1d1; border-radius: 5px; padding: 10px; background-color: #d4f5d4; color: #2c3e50; font-size: 14px; margin-top: 10px; min-height: 70px;">
                             <strong>Reason:</strong> {reason}
                         </div>
                         """
                         cols[col].markdown(reason_html, unsafe_allow_html=True)
+                        
                         # Add expander for more details
                         with cols[col].expander("RAW OUTPUT", expanded=False):
                             # filtered_record = remove_none_and_specific_keys(supplier_record, keys_to_remove)
@@ -220,42 +231,47 @@ Ready to get started? Simply enter your search criteria below!
                         cols[col].markdown("")
         except:
             pass
-        
+
+
     if search_button:
         if query:
             with st.spinner("Searching..."):
                 search_id = str(uuid.uuid4())
                 thread_id = str(uuid.uuid4())
-                get_supplier_ids(search_id, query, thread_id)
-                log = wait_for_log(thread_id, timeout=30)
-                if log is None:
-                    st.error("Failed to retrieve the log entry within the timeout period.")
+
+                # Make sure configInputDict['admin_id'] exists before using it
+                admin_id = configInputDict.get('admin_id', [None])[0]
+                if admin_id is None:
+                    st.error("Admin ID not found in configuration. Please check your config.yaml file.")
                 else:
-                    token_usage = log['token_usage']
-                    ai_answer = log['ai_response']
-                    st.success(f":robot_face:: {ai_answer}")
-                    # col1, col2, col3 = st.columns(3)
-                    # col1.metric(label="Total Tokens", value=f"{token_usage['total_tokens']:,}")
-                    # col2.metric(label="Prompt Tokens", value=f"{token_usage['prompt_tokens']:,}")
-                    # col3.metric(label="Completion Tokens", value=f"{token_usage['completion_tokens']:,}")
-                    critiria = {"search_id": search_id}
-                    search_record = search_collection.find_one(critiria)
-                    supplier_ids = search_record.get('supplier_ids')
-                    reasons = search_record.get('reasons')
-                    contents = search_record.get('retrieved_data')
-                    st.divider()
-                    display_limit = 30
-                    display_supplier_grid(supplier_ids[:display_limit],
-                                        reasons[:display_limit],
-                                        contents[:display_limit])
+                    get_supplier_ids(search_id, query, thread_id)
 
+                    log = wait_for_log(thread_id, timeout=30)
 
+                    if log is None:
+                        st.error("Failed to retrieve the log entry within the timeout period.")
+                    else:
+                        token_usage = log['token_usage']
+                        ai_answer = log['ai_response']
+                        st.success(f"🤖: {ai_answer}")
 
+                        # col1, col2, col3 = st.columns(3)
+                        # col1.metric(label="Total Tokens", value=f"{token_usage['total_tokens']:,}")
+                        # col2.metric(label="Prompt Tokens", value=f"{token_usage['prompt_tokens']:,}")
+                        # col3.metric(label="Completion Tokens", value=f"{token_usage['completion_tokens']:,}")
 
+                        critiria = {"search_id": search_id}
+                        search_record = search_collection.find_one(critiria)
 
+                        supplier_ids = search_record.get('supplier_ids')
+                        reasons = search_record.get('reasons')
+                        contents = search_record.get('retrieved_data')
 
+                        st.divider()
 
-
-
+                        display_limit = 30
+                        display_supplier_grid(supplier_ids[:display_limit], 
+                                              reasons[:display_limit], 
+                                              contents[:display_limit])
 else:
     st.stop()  # Don't run the rest of the app.

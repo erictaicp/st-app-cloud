@@ -4,25 +4,26 @@ import os, yaml, uuid
 from pymongo import MongoClient, ASCENDING, DESCENDING
 from dotenv import load_dotenv 
 import pandas as pd
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils import add_logo
 
 load_dotenv()  
 
-# Get the absolute path of the directory of the current script    
-dir_path = os.path.dirname(os.path.realpath(__file__))    
-  
-# Use os.path.join to navigate to the config.yaml file    
-config_path = os.path.join(dir_path, 'app', 'config.yaml')    
-with open(config_path, 'r') as file:    
-    config = yaml.safe_load(file)    
-  
-config_path = os.path.join(dir_path, 'app', 'config_Air8.yaml')  
-with open(config_path, 'r') as file:  
-    config_Air8 = yaml.safe_load(file)  
-  
-configInputDict = config['inputs']  
-# supportDocs = configInputDict['document_type']
-# country_code_dict = configInputDict['country_code']    
+# Get the absolute path of the directory of the current script
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
+# Navigate up one level to the root directory
+root_dir = os.path.dirname(dir_path)
+
+# Use os.path.join to navigate to the config.yaml file
+config_path = os.path.join(root_dir, 'config.yaml')
+with open(config_path, 'r') as file:
+    config = yaml.safe_load(file)
+
+config_Air8_path = os.path.join(root_dir, 'config_Air8.yaml')
+with open(config_Air8_path, 'r') as file:
+    config_Air8 = yaml.safe_load(file)
 
 # MongoDB connection setup  
 mongo_conn_str = os.getenv("POC_MONGOCONN")  
@@ -33,7 +34,7 @@ collection = db['air8_company_info_news']
 lang_code = {
     "English 🇺🇸": "English",
     "繁體中文 🇭🇰": "Traditional Chinese",
-    "简体中文 🇨🇳": "Simplified Chinese",
+    "简体���文 🇨🇳": "Simplified Chinese",
     }
 
 news_sources = [

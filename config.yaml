@@ -90,6 +90,7 @@ tools:
   - retrieve_information_air8
   - search_company_info_and_news_air8
   - supplier_search
+  - run_data_visualization
   client_tools:
   - web_search
   - send_reminder_to_single
