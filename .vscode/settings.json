@@ -1,0 +1,14 @@
+{
+    "containerApps.deploymentConfigurations": [
+        {
+            "label": "st-app-cloud",
+            "type": "AcrDockerBuildRequest",
+            "dockerfilePath": "Dockerfile",
+            "srcPath": ".",
+            "envPath": ".env",
+            "resourceGroup": "lft-search-demo",
+            "containerApp": "st-app-cloud",
+            "containerRegistry": "lftsearchdemo5721a4"
+        }
+    ]
+}
