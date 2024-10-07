@@ -361,146 +361,157 @@ st.set_page_config(
 # Add logo to all pages
 add_logo()
 
+# Add this near the top of your script, after the imports
+if 'current_tab' not in st.session_state:
+    st.session_state.current_tab = 0
+
+# Replace the tabs creation with this:
+tab_titles = ["Supplier Search", "Product Search"]
+tabs = st.tabs(tab_titles)
+
 # Main app logic
 if check_password():
 
     st.title('🏭 Supplier & Product Search 🛒')
 
-    # Create tabs
-    tabs = st.tabs(["Supplier Search", "Product Search"])
+    # Inside your main app logic, replace the tabs section with this:
+    current_tab = st.radio("Select Tab:", tab_titles, index=st.session_state.current_tab, key="tab_selection", label_visibility="collapsed")
+    st.session_state.current_tab = tab_titles.index(current_tab)
 
     # Supplier Search tab
-    with tabs[0]:
-        st.markdown("""
-        ##### AI-Powered Supplier Search Tool 🛠️
+    if st.session_state.current_tab == 0:
+        with tabs[0]:
+            st.markdown("""
+            ##### AI-Powered Supplier Search Tool 🛠️
 
-        Use natural language to effortlessly search and explore supplier records. Just type in your search criteria and let us do the rest!
+            Use natural language to effortlessly search and explore supplier records. Just type in your search criteria and let us do the rest!
 
-        - 🏢 **Quick Search**: Find suppliers using natural language queries.
-        - 🧵 **Detailed Information**: Get comprehensive details about each supplier.
-        - 🏗️ **User-Friendly**: Easy to use interface with expandable sections for detailed views.
+            - 🏢 **Quick Search**: Find suppliers using natural language queries.
+            - 🧵 **Detailed Information**: Get comprehensive details about each supplier.
+            - 🏗️ **User-Friendly**: Easy to use interface with expandable sections for detailed views.
 
-        Ready to get started? Simply enter your search criteria below!
-        """, unsafe_allow_html=True)
-
-        st.markdown("""
-            <style>
-            .elongated-button .stButton button {
-                width: 100%;
-            }
-            </style>
+            Ready to get started? Simply enter your search criteria below!
             """, unsafe_allow_html=True)
 
-        col1, col2 = st.columns([3, 1])
-        with col1:
-            query_supplier = st.text_input("Supplier Query", 
-                                        placeholder="Enter supplier name, ID, or any relevant criteria...", 
-                                        key="query_supplier", 
-                                        label_visibility='collapsed')
-        with col2:
-            search_supplier_button = st.button(label='Search Supplier', 
-                                            key="search_supplier_button", 
-                                            help="Click to search", 
-                                            use_container_width=True)
+            st.markdown("""
+                <style>
+                .elongated-button .stButton button {
+                    width: 100%;
+                }
+                </style>
+                """, unsafe_allow_html=True)
 
-        # Add functionality for the supplier search button here
-        if search_supplier_button:
-            if query_supplier:
-                with st.spinner("Searching for suppliers..."):
-                    search_id = str(uuid.uuid4())
-                    thread_id = str(uuid.uuid4())
+            col1, col2 = st.columns([3, 1])
+            with col1:
+                query_supplier = st.text_input("Supplier Query", 
+                                            placeholder="Enter supplier name, ID, or any relevant criteria...", 
+                                            key="query_supplier", 
+                                            label_visibility='collapsed')
+            with col2:
+                search_supplier_button = st.button(label='Search Supplier', 
+                                                key="search_supplier_button", 
+                                                help="Click to search", 
+                                                use_container_width=True)
 
-                    get_supplier_ids(search_id, query_supplier, thread_id)
+            # Add functionality for the supplier search button here
+            if search_supplier_button:
+                if query_supplier:
+                    with st.spinner("Searching for suppliers..."):
+                        search_id = str(uuid.uuid4())
+                        thread_id = str(uuid.uuid4())
 
-                    log = wait_for_log(thread_id, timeout=30)
+                        get_supplier_ids(search_id, query_supplier, thread_id)
 
-                    if log is None:
-                        st.error("Failed to retrieve the log entry within the timeout period.")
-                    else:
-                        token_usage = log['token_usage']
-                        ai_answer = log['ai_response']
-                        st.success(f"🤖: {ai_answer}")
+                        log = wait_for_log(thread_id, timeout=30)
 
-                        critiria = {"search_id": search_id}
-                        search_record = supplier_search_collection.find_one(critiria)
+                        if log is None:
+                            st.error("Failed to retrieve the log entry within the timeout period.")
+                        else:
+                            token_usage = log['token_usage']
+                            ai_answer = log['ai_response']
+                            st.success(f"🤖: {ai_answer}")
 
-                        supplier_ids = search_record.get('supplier_ids')
-                        reasons = search_record.get('reasons')
-                        contents = search_record.get('retrieved_data')
+                            critiria = {"search_id": search_id}
+                            search_record = supplier_search_collection.find_one(critiria)
 
-                        st.divider()
+                            supplier_ids = search_record.get('supplier_ids')
+                            reasons = search_record.get('reasons')
+                            contents = search_record.get('retrieved_data')
 
-                        display_limit = 30
-                        display_supplier_grid(supplier_ids[:display_limit], 
-                                            reasons[:display_limit], 
-                                            contents[:display_limit])
+                            st.divider()
+
+                            display_limit = 30
+                            display_supplier_grid(supplier_ids[:display_limit], 
+                                                reasons[:display_limit], 
+                                                contents[:display_limit])
 
     # Product Search tab
-    with tabs[1]:
-        st.markdown("""
-        ##### AI-Powered Product Search Tool 🛠️
+    elif st.session_state.current_tab == 1:
+        with tabs[1]:
+            st.markdown("""
+            ##### AI-Powered Product Search Tool 🛠️
 
-        Use natural language to effortlessly search and explore product records. Just type in your search criteria or upload an image, and let us do the rest!
+            Use natural language to effortlessly search and explore product records. Just type in your search criteria or upload an image, and let us do the rest!
 
-        - 🔍 **Quick Search**: Discover products using natural language queries, images, or a combination of both..
-        - 📝 **Detailed Information**: Get comprehensive details about each product.
-        - 🖥️  **User-Friendly**: Easy to use interface with expandable sections for detailed views.
+            - 🔍 **Quick Search**: Discover products using natural language queries, images, or a combination of both..
+            - 📝 **Detailed Information**: Get comprehensive details about each product.
+            - 🖥️  **User-Friendly**: Easy to use interface with expandable sections for detailed views.
 
-        Ready to get started? Simply enter your search criteria or upload an image below!
-        """, unsafe_allow_html=True)
-
-        st.markdown("""
-            <style>
-            .elongated-button .stButton button {
-                width: 100%;
-            }
-            </style>
+            Ready to get started? Simply enter your search criteria or upload an image below!
             """, unsafe_allow_html=True)
 
-        col1, col2 = st.columns([3, 1])
-        with col1:
-            query_product = st.text_input("Product Query", 
-                                        placeholder="Enter product name, ID, or any relevant criteria...", 
-                                        key="query_product", 
-                                        label_visibility='collapsed')
-            image_path = st.file_uploader("Upload Product Image", type=["jpg", "jpeg", "png"], key="image_path")
-        with col2:
-            search_product_button = st.button(label='Search Product', 
-                                            key="search_product_button", 
-                                            help="Click to search", 
-                                            use_container_width=True)
-            if image_path:
-                st.image(image_path, caption="Uploaded Image", use_column_width=True)
-        # Add functionality for the supplier search button here
-        if search_product_button:
-            if query_product or image_path:
-                with st.spinner("Searching for products..."):
-                    search_id = str(uuid.uuid4())
-                    thread_id = str(uuid.uuid4())
+            st.markdown("""
+                <style>
+                .elongated-button .stButton button {
+                    width: 100%;
+                }
+                </style>
+                """, unsafe_allow_html=True)
 
-                    get_product_ids(search_id, thread_id, query_product, image_path)
+            col1, col2 = st.columns([3, 1])
+            with col1:
+                query_product = st.text_input("Product Query", 
+                                            placeholder="Enter product name, ID, or any relevant criteria...", 
+                                            key="query_product", 
+                                            label_visibility='collapsed')
+                image_path = st.file_uploader("Upload Product Image", type=["jpg", "jpeg", "png"], key="image_path")
+            with col2:
+                search_product_button = st.button(label='Search Product', 
+                                                key="search_product_button", 
+                                                help="Click to search", 
+                                                use_container_width=True)
+                if image_path:
+                    st.image(image_path, caption="Uploaded Image", use_column_width=True)
+            # Add functionality for the supplier search button here
+            if search_product_button:
+                if query_product or image_path:
+                    with st.spinner("Searching for products..."):
+                        search_id = str(uuid.uuid4())
+                        thread_id = str(uuid.uuid4())
 
-                    log = wait_for_log(thread_id, timeout=30)
+                        get_product_ids(search_id, thread_id, query_product, image_path)
 
-                    if log is None:
-                        st.error("Failed to retrieve the log entry within the timeout period.")
-                    else:
-                        token_usage = log['token_usage']
-                        ai_answer = log['ai_response']
-                        st.success(f"🤖: {ai_answer}")
+                        log = wait_for_log(thread_id, timeout=30)
 
-                        critiria = {"search_id": search_id}
-                        search_record = product_search_collection.find_one(critiria)
+                        if log is None:
+                            st.error("Failed to retrieve the log entry within the timeout period.")
+                        else:
+                            token_usage = log['token_usage']
+                            ai_answer = log['ai_response']
+                            st.success(f"🤖: {ai_answer}")
 
-                        product_uuids = search_record.get('product_uuids')
-                        reasons = search_record.get('reasons')
-                        contents = search_record.get('retrieved_data')
+                            critiria = {"search_id": search_id}
+                            search_record = product_search_collection.find_one(critiria)
 
-                        st.divider()
+                            product_uuids = search_record.get('product_uuids')
+                            reasons = search_record.get('reasons')
+                            contents = search_record.get('retrieved_data')
 
-                        display_limit = 30
-                        display_product_grid(product_uuids[:display_limit], 
-                                            reasons[:display_limit], 
-                                            contents[:display_limit])    
+                            st.divider()
+
+                            display_limit = 30
+                            display_product_grid(product_uuids[:display_limit], 
+                                                reasons[:display_limit], 
+                                                contents[:display_limit])    
 else:
     st.stop()  # Don't run the rest of the app.
