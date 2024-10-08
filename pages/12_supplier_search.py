@@ -115,27 +115,28 @@ def check_password():
         # Password correct.
         return True
     
-
 def get_supplier_ids(search_id, query, thread_id):
     
     prompt = f"""
 I would like to perform a supplier search with the following details:
 
-- search id: {search_id}
 - query: {query}
 
 Please execute the supplier_search function using these parameters.
 """
 
+    additional_config = {'search_id': search_id}
+    
     url = "https://api.uat.t4s.lfxdigital.app/agents/v1/agent/agent-call"
     payload = {'message': prompt, 
                'user_id': 'iamadmin', 
                'thread_id': thread_id,
-               "ai_role": SYSTEM_PROMPT,}
+               'additional_config': additional_config,
+               'ai_role': SYSTEM_PROMPT,}
     
     response = requests.post(url, json=payload)
     
-    
+
 def get_product_ids(search_id, thread_id, query=None, uploaded_file=None):
     
     if uploaded_file:
@@ -154,21 +155,23 @@ def get_product_ids(search_id, thread_id, query=None, uploaded_file=None):
     prompt = f"""
 I would like to perform a product search with the following details:
 
-- search id: {search_id}
 - query: {query}
 - image path: {image_path}
 
 Please execute the product_search function using these parameters.
 """
 
+    additional_config = {'search_id': search_id}
+
     url = "https://api.uat.t4s.lfxdigital.app/agents/v1/agent/agent-call"
     payload = {'message': prompt, 
                'user_id': 'iamadmin', 
                'thread_id': thread_id,
+               'additional_config': additional_config,
                "ai_role": SYSTEM_PROMPT,}
     
     response = requests.post(url, json=payload)
-
+    
 
 def wait_for_log(thread_id, timeout=60, poll_interval=2):
 
