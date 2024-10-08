@@ -68,7 +68,6 @@ st.markdown("<p style='text-align: center; font-size: 1.2rem; color: #4B5563;'>R
 st.markdown("## 🚀 Key Features")
 
 features = [
-    ("📈", "Market Researcher", "AI-powered online market research agent to gather information about interested companies and industry trends."),
     ("🧙‍♂️", "Supplier Search", "AI-powered supplier search agent to find suppliers based on specific criteria and retrieve relevant documents."),
 ]
 

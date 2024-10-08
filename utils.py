@@ -5,10 +5,10 @@ def add_logo():
         """
         <style>
             [data-testid="stSidebarNav"] {
-                background-image: url(https://lfxdigital.com/wp-content/uploads/2021/02/LFX_Logo_Final-01.png);
+                background-image: url(https://e7.pngegg.com/pngimages/343/892/png-clipart-li-fung-logo-supply-chain-chief-executive-organization-business-company-text-thumbnail.png);
                 background-repeat: no-repeat;
                 background-size: 140px;
-                padding-top: 100px;
+                padding-top: 150px;
                 top: -30px;
                 background-position: 20px 20px;
             }
@@ -17,7 +17,7 @@ def add_logo():
                 margin-left: 20px;
                 font-size: 10px;
                 position: relative;
-                top: -30px;
+                top: -8x;
                 color: #666;
             }
             [data-testid="stSidebarNav"] > ul {
