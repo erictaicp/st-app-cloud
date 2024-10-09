@@ -115,6 +115,7 @@ def check_password():
         # Password correct.
         return True
     
+
 def get_supplier_ids(search_id, query, thread_id):
     
     prompt = f"""
@@ -136,7 +137,7 @@ Please execute the supplier_search function using these parameters.
     
     response = requests.post(url, json=payload)
     
-
+    
 def get_product_ids(search_id, thread_id, query=None, uploaded_file=None):
     
     if uploaded_file:
@@ -171,7 +172,7 @@ Please execute the product_search function using these parameters.
                "ai_role": SYSTEM_PROMPT,}
     
     response = requests.post(url, json=payload)
-    
+
 
 def wait_for_log(thread_id, timeout=60, poll_interval=2):
 
@@ -232,7 +233,7 @@ def display_supplier_record(record):
     """
 
 
-def display_supplier_grid(supplier_ids, reasons, contents):
+def display_supplier_grid(supplier_ids, reasons, contents, scores):
     st.markdown("### 🏬 Supplier Search Results")
     
     num_to_display = 2
@@ -254,8 +255,11 @@ def display_supplier_grid(supplier_ids, reasons, contents):
                     
                     content = contents[index]
                     reason = reasons[index]
+                    score = scores[index]
+                    
                     reason_html = f"""
-                    <div style="border: 1px solid #d1d1d1; border-radius: 5px; padding: 10px; background-color: #d4f5d4; color: #2c3e50; font-size: 14px; margin-top: 10px; min-height: 70px;">
+                    <div style="border: 1px solid #d1d1d1; border-radius: 5px; padding: 10px; background-color: #d4f5d4; color: #2c3e50; font-size: 14px; margin-top: 10px; min-height: 85px;">
+                        <strong>Score:</strong> {score:.2f}<br>
                         <strong>Reason:</strong> {reason}
                     </div>
                     """
@@ -283,11 +287,11 @@ def display_product_record(record):
     <div style="border:1px solid #d1d1d1; padding: 10px 20px; border-radius: 10px; height: 150px; background-color: #f9f9f9; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
         <h3 style="margin: 0 0 5px 0; max-height: 35px; overflow-y: auto; color: #2c3e50; font-size: 20px;">{product_full_name}</h3>
         <div style="display: flex; justify-content: space-between; margin: 5px 0; color: #2c3e50; font-size: 14px;">
-            <p style="margin: 0;"><strong>🏷️ Category:</strong> {product_category}</p>
+            <p style="margin: 0;"><strong>🆔 ID:</strong> {product_id}</p>
             <p style="margin: 0;"><strong>📦 Family:</strong> {product_family}</p>
         </div>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; color: #2c3e50; font-size: 14px;">
-            <p style="margin: 0; max-height: 30px; overflow-y: auto;"><strong>🆔 ID:</strong> {product_id}</p>
+            <p style="margin: 0; max-height: 30px; overflow-y: auto;"><strong>🏷️ Category:</strong> {product_category}</p>
         </div>
     </div>
     """
@@ -300,11 +304,11 @@ def display_product_record(record):
     <div style="border:1px solid #d1d1d1; padding: 10px 20px; border-radius: 10px; height: 150px; background-color: #f9f9f9; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
         <h3 style="margin: 0 0 5px 0; max-height: 35px; overflow-y: auto; color: #2c3e50; font-size: 20px;">{product_full_name}</h3>
         <div style="display: flex; justify-content: space-between; margin: 5px 0; color: #2c3e50; font-size: 14px;">
-            <p style="margin: 0;"><strong>🏷️ Category:</strong> {product_category}</p>
+            <p style="margin: 0;"><strong>🆔 ID:</strong> {product_id} </p>
             <p style="margin: 0;"><strong>📦 Family:</strong> {product_family}</p>
         </div>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; color: #2c3e50; font-size: 14px;">
-            <p style="margin: 0; max-height: 30px; overflow-y: auto;"><strong>🆔 ID:</strong> {product_id}</p>
+            <p style="margin: 0; max-height: 30px; overflow-y: auto;"><strong>🏷️ Category:</strong> {product_category}</p>
             <a href="{image_url}" target="_blank">
                 <button style="padding: 10px 20px; background-color: #2980b9; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px;">
                     Image
@@ -317,7 +321,7 @@ def display_product_record(record):
     return html_content
     
 
-def display_product_grid(product_uuids, reasons, contents):
+def display_product_grid(product_uuids, reasons, contents, scores):
     st.markdown("### 🛍️ Product Search Results")
     
     num_to_display = 2
@@ -339,8 +343,11 @@ def display_product_grid(product_uuids, reasons, contents):
                     
                     content = contents[index]
                     reason = reasons[index]
+                    score = scores[index]
+                    
                     reason_html = f"""
-                    <div style="border: 1px solid #d1d1d1; border-radius: 5px; padding: 10px; background-color: #d4f5d4; color: #2c3e50; font-size: 14px; margin-top: 10px; min-height: 70px;">
+                    <div style="border: 1px solid #d1d1d1; border-radius: 5px; padding: 10px; background-color: #d4f5d4; color: #2c3e50; font-size: 14px; margin-top: 10px; min-height: 85px;">
+                        <strong>Score:</strong> {score:.2f}<br>
                         <strong>Reason:</strong> {reason}
                     </div>
                     """
@@ -353,6 +360,12 @@ def display_product_grid(product_uuids, reasons, contents):
                     cols[col].markdown("")
     except:
         pass
+    
+    
+def format_scores(scores):
+    max_score = max(scores)
+    percentage_scores = [(score / max_score) * 100 for score in scores]
+    return percentage_scores
 
 
 # Set page configuration and theme
@@ -386,6 +399,14 @@ if check_password():
         Ready to get started? Simply enter your search criteria below!
         """, unsafe_allow_html=True)
 
+        with st.expander("Examples"):
+            st.markdown("""
+            - Supplier with excellent audit result and in Indonesia
+            - Supplier with turnover higher than 5 millions
+            - Factory that has order history of jeans
+            - Factory that has customer from Spain
+            """)
+
         st.markdown("""
             <style>
             .elongated-button .stButton button {
@@ -393,6 +414,12 @@ if check_password():
             }
             </style>
             """, unsafe_allow_html=True)
+
+        with st.expander("Examples"):
+            st.markdown("""
+            - Nintendo related toys ordered by SUPH
+            - Bunny dress
+            """)
 
         col1, col2 = st.columns([3, 1])
         with col1:
@@ -423,20 +450,32 @@ if check_password():
                         token_usage = log['token_usage']
                         ai_answer = log['ai_response']
                         st.success(f"🤖: {ai_answer}")
+                        st.divider()
 
                         critiria = {"search_id": search_id}
                         search_record = supplier_search_collection.find_one(critiria)
+                            
+                        result_list = search_record.get('result')
+                        if result_list is not None:
+                            length = len(result_list)
+                        else:
+                            length = 0
+                            
+                        if length > 0:
+                            supplier_ids = [result['supplier_ids'] for result in result_list]
+                            reasons = [result['reason'] for result in result_list]
+                            contents = [result['content'] for result in result_list]
+                            scores = [result['score'] for result in result_list]
+                            scores = format_scores(scores)
 
-                        supplier_ids = search_record.get('supplier_ids')
-                        reasons = search_record.get('reasons')
-                        contents = search_record.get('retrieved_data')
-
-                        st.divider()
-
-                        display_limit = 30
-                        display_supplier_grid(supplier_ids[:display_limit], 
-                                            reasons[:display_limit], 
-                                            contents[:display_limit])
+                            display_limit = 30
+                            display_supplier_grid(supplier_ids[:display_limit], 
+                                                reasons[:display_limit], 
+                                                contents[:display_limit],
+                                                scores[:display_limit])
+                        else:
+                            st.markdown("### 🏬 Supplier Search Results")
+                            st.markdown("##### Apologies, no matching results were found. Please try adjusting your search criteria or keywords.")
 
     # Product Search tab
     with tabs[1]:
@@ -491,19 +530,31 @@ if check_password():
                         token_usage = log['token_usage']
                         ai_answer = log['ai_response']
                         st.success(f"🤖: {ai_answer}")
+                        st.divider()
 
                         critiria = {"search_id": search_id}
                         search_record = product_search_collection.find_one(critiria)
 
-                        product_uuids = search_record.get('product_uuids')
-                        reasons = search_record.get('reasons')
-                        contents = search_record.get('retrieved_data')
+                        result_list = search_record.get('result')
+                        if result_list is not None:
+                            length = len(result_list)
+                        else:
+                            length = 0
+                            
+                        if length > 0:
+                            product_uuids = [result['uuid'] for result in result_list]
+                            reasons = [result['reason'] for result in result_list]
+                            contents = [result['content'] for result in result_list]
+                            scores = [result['score'] for result in result_list]
+                            scores = format_scores(scores)
 
-                        st.divider()
-
-                        display_limit = 30
-                        display_product_grid(product_uuids[:display_limit], 
-                                            reasons[:display_limit], 
-                                            contents[:display_limit])    
+                            display_limit = 30
+                            display_product_grid(product_uuids[:display_limit], 
+                                                reasons[:display_limit], 
+                                                contents[:display_limit],
+                                                scores[:display_limit])
+                        else:
+                            st.markdown("### 🛍️ Product Search Results")
+                            st.markdown("##### Apologies, no matching results were found. Please try adjusting your search criteria or keywords.")
 else:
     st.stop()  # Don't run the rest of the app.
