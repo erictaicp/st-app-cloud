@@ -415,12 +415,6 @@ if check_password():
             </style>
             """, unsafe_allow_html=True)
 
-        with st.expander("Examples"):
-            st.markdown("""
-            - Nintendo related toys ordered by SUPH
-            - Bunny dress
-            """)
-
         col1, col2 = st.columns([3, 1])
         with col1:
             query_supplier = st.text_input("Supplier Query", 
@@ -498,7 +492,13 @@ if check_password():
             }
             </style>
             """, unsafe_allow_html=True)
-
+        
+        with st.expander("Examples"):
+            st.markdown("""
+            - Nintendo related toys ordered by SUPH
+            - Bunny dress
+            """)
+            
         col1, col2 = st.columns([3, 1])
         with col1:
             query_product = st.text_input("Product Query", 
